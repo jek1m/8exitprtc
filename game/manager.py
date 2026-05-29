@@ -134,16 +134,6 @@ class GameManager:
             enabled=False,
         )
 
-        self.warning_overlay = Entity(
-            parent=camera.ui,
-            model='quad',
-            position=(0, 0),
-            scale=(2, 1.2),
-            color=color.rgba(255, 0, 0, 0),
-            z=0.5,
-            enabled=False,
-        )
-
     def _create_start_ui(self):
         self.start_panel = Entity(
             parent=camera.ui,
@@ -256,7 +246,7 @@ class GameManager:
 
         self._refresh_hud()
         self._update_message_timer()
-        self._update_warning_overlay()
+
     def handle_input(self, key):
         if key == 'escape':
             application.quit()
@@ -465,21 +455,6 @@ class GameManager:
         else:
             self.objective_text.text = '목표: 초록색 출구로 이동'
 
-    def _update_warning_overlay(self):
-        distance = self.chaser.distance_to_player()
-
-        if distance <= 15:
-            blink = int(time.time() * 4) % 2
-
-            if blink == 0:
-                self.warning_overlay.color = color.rgba(255, 0, 0, 45)
-            else:
-                self.warning_overlay.color = color.rgba(255, 0, 0, 0)
-
-            self.warning_overlay.enabled = True
-        else:
-            self.warning_overlay.enabled = False
-            
     def check_back_route(self):
         if self.quiz_zone.active:
             return False
@@ -492,7 +467,7 @@ class GameManager:
             return True
 
         return False
-    
+
     def _hide_game_ui(self):
         self.hud_panel.enabled = False
         self.hud_text.enabled = False
@@ -502,7 +477,6 @@ class GameManager:
         self.objective_text.enabled = False
         self.message_panel.enabled = False
         self.message_text.enabled = False
-        self.warning_overlay.enabled = False
 
     def _make_result_text(self):
         minutes = int(self.total_play_time // 60)
@@ -526,4 +500,3 @@ class GameManager:
             f'[ R ] 다시 시작\n'
             f'[ ESC ] 종료'
         )
-    
