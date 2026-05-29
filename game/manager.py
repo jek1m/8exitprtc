@@ -241,6 +241,11 @@ class GameManager:
             return
 
         self.quiz_zone.update(self.player)
+
+        # 뒤로 가면 현재 층 새로 시작
+        if self.check_back_route():
+            return
+
         self.level.wrap_player(self.player, self.quiz_zone.active)
         self.level.keep_player_in_corridor(self.player)
         self.chaser.update()
@@ -252,7 +257,6 @@ class GameManager:
         self._refresh_hud()
         self._update_message_timer()
         self._update_warning_overlay()
-
     def handle_input(self, key):
         if key == 'escape':
             application.quit()
@@ -475,7 +479,20 @@ class GameManager:
             self.warning_overlay.enabled = True
         else:
             self.warning_overlay.enabled = False
+            
+    def check_back_route(self):
+        if self.quiz_zone.active:
+            return False
 
+        if self.player.position.x > 25 and self.player.position.z < -50:
+            self.event_logs.append(f'{self.floor}층 뒤로 이동하여 재시작')
+
+            self.reset_current_floor()
+            self.show_message('뒤로 이동했습니다. 현재 층을 다시 시작합니다.', 3)
+            return True
+
+        return False
+    
     def _hide_game_ui(self):
         self.hud_panel.enabled = False
         self.hud_text.enabled = False
@@ -509,3 +526,4 @@ class GameManager:
             f'[ R ] 다시 시작\n'
             f'[ ESC ] 종료'
         )
+    
