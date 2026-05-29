@@ -1,6 +1,6 @@
 from ursina import Entity, color
 
-from .constants import KOREAN_FONT
+from .constants import KOREAN_FONT, PLAYER_CORRIDOR_RADIUS
 from .navigation import CorridorNavigation
 
 
