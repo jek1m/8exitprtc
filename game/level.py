@@ -1,6 +1,6 @@
 from ursina import Entity, color
 
-from .constants import KOREAN_FONT, PLAYER_CORRIDOR_RADIUS
+from .constants import PLAYER_CORRIDOR_RADIUS
 from .navigation import CorridorNavigation
 
 
@@ -14,7 +14,6 @@ class LevelManager:
         self.front_sign = None
         self.back_sign = None
         self.exit_gate = None
-        self.anomaly_object = None
 
         self.build_level()
 
@@ -24,7 +23,6 @@ class LevelManager:
         self._back_corridor()
         self._signs()
         self._exit_gate()
-        self._anomaly_object()
 
     def _main_corridor(self):
         Entity(
@@ -191,15 +189,6 @@ class LevelManager:
             collider='box',
         )
 
-    def _anomaly_object(self):
-        self.anomaly_object = Entity(
-            model='sphere',
-            position=(0, 3.2, 5),
-            scale=(1.1, 1.1, 1.1),
-            color=color.red,
-            enabled=False,
-        )
-
     def apply_anomaly(self, anomaly_type):
         self.reset_anomaly()
 
@@ -216,9 +205,6 @@ class LevelManager:
             self.left_wall.color = color.rgb(150, 150, 150)
             self.right_wall.color = color.rgb(150, 150, 150)
 
-        elif anomaly_type == 'red_sphere':
-            self.anomaly_object.enabled = True
-
     def reset_anomaly(self):
         self.ceiling_sign.texture = 'assets/exit_8_ceiling.jpg'
         self.ceiling_sign.color = color.white
@@ -228,8 +214,6 @@ class LevelManager:
         self.left_wall.color = color.white
         self.right_wall.color = color.white
 
-        self.anomaly_object.enabled = False
-
     def get_anomaly_hint(self, anomaly_type):
         if anomaly_type == 'sign_wrong':
             return '힌트: 출구 표지판의 숫자를 확인하세요.'
@@ -237,8 +221,6 @@ class LevelManager:
             return '힌트: 출구문의 색깔을 확인하세요.'
         if anomaly_type == 'wall_dark':
             return '힌트: 양쪽 벽의 밝기를 확인하세요.'
-        if anomaly_type == 'red_sphere':
-            return '힌트: 복도 중앙에 이상한 물체가 있는지 확인하세요.'
 
         return '힌트: 이번 층은 특별한 이상현상이 없을 수 있습니다.'
 
@@ -267,7 +249,7 @@ class LevelManager:
     def keep_player_in_corridor(self, player):
         safe_x, safe_z = self.navigation.clamp_to_path(
             (player.position.x, player.position.z),
-            radius=4.05,
+            radius=PLAYER_CORRIDOR_RADIUS,
         )
 
         player.set_position((safe_x, player.position.y, safe_z))

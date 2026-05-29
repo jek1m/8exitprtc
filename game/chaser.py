@@ -21,6 +21,7 @@ class ChaserNPC:
 
         self.actor = Actor('assets/npc.glb')
         self.actor.reparent_to(self.entity)
+        self.actor.setH(180)
 
         self.marker = Entity(
             parent=self.entity,
