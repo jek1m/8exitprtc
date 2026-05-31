@@ -12,6 +12,7 @@ loadPrcFileData('', 'render-mode forward')
 
 app = Ursina()
 
+window.fullscreen = True
 window.fps_counter.enabled = False
 window.entity_counter.enabled = False
 window.collider_counter.enabled = False

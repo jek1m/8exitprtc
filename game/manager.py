@@ -15,6 +15,7 @@ class GameManager:
         self.state = 'start'
 
         self.message_timer = 0
+        self.objective_timer = 0
         self.floor_timer = BASE_FLOOR_TIME
         self.total_play_time = 0
 
@@ -51,8 +52,8 @@ class GameManager:
         self.hud_panel = Entity(
             parent=camera.ui,
             model='quad',
-            position=(-0.65, 0.38),
-            scale=(0.58, 0.25),
+            position=(-0.70, 0.40),
+            scale=(0.38, 0.20),
             color=color.rgba(0, 0, 0, 150),
             z=0.2,
             enabled=False,
@@ -61,7 +62,7 @@ class GameManager:
         self.hud_text = Text(
             parent=camera.ui,
             text='',
-            position=(-0.90, 0.47),
+            position=(-0.86, 0.47),
             z=-0.2,
             scale=1.05,
             color=color.white,
@@ -72,7 +73,7 @@ class GameManager:
         self.timer_text = Text(
             parent=camera.ui,
             text='',
-            position=(-0.90, 0.41),
+            position=(-0.86, 0.41),
             z=-0.2,
             scale=1.0,
             color=color.white,
@@ -83,7 +84,7 @@ class GameManager:
         self.status_text = Text(
             parent=camera.ui,
             text='',
-            position=(-0.90, 0.35),
+            position=(-0.86, 0.35),
             z=-0.2,
             scale=0.95,
             color=color.yellow,
@@ -94,8 +95,8 @@ class GameManager:
         self.objective_panel = Entity(
             parent=camera.ui,
             model='quad',
-            position=(0.42, 0.42),
-            scale=(1.02, 0.12),
+            position=(0.16, 0.42),
+            scale=(0.68, 0.12),
             color=color.rgba(0, 0, 0, 130),
             z=0.2,
             enabled=False,
@@ -104,7 +105,7 @@ class GameManager:
         self.objective_text = Text(
             parent=camera.ui,
             text='목표: 초록색 출구로 이동',
-            position=(-0.04, 0.445),
+            position=(-0.12, 0.445),
             z=-0.2,
             scale=0.95,
             color=color.white,
@@ -246,6 +247,7 @@ class GameManager:
 
         self._refresh_hud()
         self._update_message_timer()
+        self._update_objective_timer()
 
     def handle_input(self, key):
         if key == 'escape':
@@ -282,8 +284,7 @@ class GameManager:
         self.hud_text.enabled = True
         self.timer_text.enabled = True
         self.status_text.enabled = True
-        self.objective_panel.enabled = True
-        self.objective_text.enabled = True
+        self.show_objective('목표: 초록색 출구로 이동', 4)
 
         self.player.enabled = True
         mouse.locked = True
@@ -418,6 +419,13 @@ class GameManager:
         self.message_panel.enabled = True
         self.message_text.enabled = True
 
+    def show_objective(self, message, duration):
+        self.objective_text.text = message
+        self.objective_timer = duration
+
+        self.objective_panel.enabled = True
+        self.objective_text.enabled = True
+
     def _update_message_timer(self):
         if self.message_timer > 0:
             self.message_timer -= time.dt
@@ -426,6 +434,15 @@ class GameManager:
                 self.message_text.text = ''
                 self.message_panel.enabled = False
                 self.message_text.enabled = False
+
+    def _update_objective_timer(self):
+        if self.objective_timer > 0:
+            self.objective_timer -= time.dt
+
+            if self.objective_timer <= 0:
+                self.objective_text.text = ''
+                self.objective_panel.enabled = False
+                self.objective_text.enabled = False
 
     def _refresh_hud(self):
         distance = self.chaser.distance_to_player()
@@ -450,11 +467,6 @@ class GameManager:
         else:
             self.timer_text.color = color.white
 
-        if self.quiz_zone.active:
-            self.objective_text.text = '목표: 문제를 풀어 다음 층으로 이동'
-        else:
-            self.objective_text.text = '목표: 초록색 출구로 이동'
-
     def check_back_route(self):
         if self.quiz_zone.active:
             return False
@@ -475,6 +487,7 @@ class GameManager:
         self.status_text.enabled = False
         self.objective_panel.enabled = False
         self.objective_text.enabled = False
+        self.objective_timer = 0
         self.message_panel.enabled = False
         self.message_text.enabled = False
 
