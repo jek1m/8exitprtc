@@ -99,6 +99,7 @@ class QuizZone:
 
         if self.question_type == 'math':
             answer = self.choices[self.correct_index]
+
             if answer % 2 == 0:
                 self.hint_text = '힌트: 정답은 짝수입니다.'
             else:
@@ -110,14 +111,12 @@ class QuizZone:
         elif self.question_type == 'sign_number':
             self.hint_text = '힌트: 천장에 있는 노란 출구 표지판을 확인하세요.'
 
-        elif self.question_type == 'gate_color':
-            self.hint_text = '힌트: 초록색 출구문 색이 바뀌었는지 확인하세요.'
-
         self._render()
         return True
 
     def _make_question(self):
-        question_types = ['math', 'anomaly_yes_no', 'sign_number', 'gate_color']
+        # gate_color 제거함
+        question_types = ['math', 'anomaly_yes_no', 'sign_number']
         question_type = random.choice(question_types)
 
         if question_type == 'math':
@@ -126,10 +125,7 @@ class QuizZone:
         if question_type == 'anomaly_yes_no':
             return self._make_anomaly_question(question_type)
 
-        if question_type == 'sign_number':
-            return self._make_sign_question(question_type)
-
-        return self._make_gate_color_question(question_type)
+        return self._make_sign_question(question_type)
 
     def _make_math_question(self, question_type):
         floor = self.game.floor
@@ -166,17 +162,6 @@ class QuizZone:
 
         answer = 0 if self.game.current_anomaly == 'sign_wrong' else 8
         choices = [8, 0, 9]
-
-        random.shuffle(choices)
-        correct_index = choices.index(answer)
-
-        return question, choices, correct_index, question_type
-
-    def _make_gate_color_question(self, question_type):
-        question = '출구문의 색깔은 무엇입니까?'
-
-        answer = '빨강' if self.game.current_anomaly == 'gate_red' else '초록'
-        choices = ['초록', '빨강', '노랑']
 
         random.shuffle(choices)
         correct_index = choices.index(answer)
