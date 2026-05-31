@@ -14,6 +14,8 @@ class LevelManager:
         self.front_sign = None
         self.back_sign = None
         self.exit_gate = None
+        self.gate_portal_front = None
+        self.gate_portal_back = None
 
         self.build_level()
 
@@ -70,10 +72,11 @@ class LevelManager:
             )
 
     def _front_corridor(self):
-        Entity(model='cube', position=(-25, 0, 55), scale=(60, 1, 10), color=color.gray, collider='box')
-        Entity(model='cube', position=(-25, 10, 55), scale=(60, 1, 10), color=color.gray, collider='box')
+        Entity(name='front_floor_1', model='cube', position=(-25, 0, 55), scale=(60, 1, 10), color=color.gray, collider='box')
+        Entity(name='front_ceiling_1', model='cube', position=(-25, 10, 55), scale=(60, 1, 10), color=color.gray, collider='box')
 
         Entity(
+            name='front_wall_z50',
             model='cube',
             position=(-30, 5, 50),
             scale=(50, 10, 1),
@@ -83,6 +86,7 @@ class LevelManager:
         )
 
         Entity(
+            name='front_wall_z60',
             model='cube',
             position=(-20, 5, 60),
             scale=(50, 10, 1),
@@ -91,10 +95,11 @@ class LevelManager:
             texture_scale=(16, 10),
         )
 
-        Entity(model='cube', position=(-50, 0, 80), scale=(10, 1, 60), color=color.gray, collider='box')
-        Entity(model='cube', position=(-50, 10, 80), scale=(10, 1, 60), color=color.gray, collider='box')
+        Entity(name='front_floor_2', model='cube', position=(-50, 0, 80), scale=(10, 1, 60), color=color.gray, collider='box')
+        Entity(name='front_ceiling_2', model='cube', position=(-50, 10, 80), scale=(10, 1, 60), color=color.gray, collider='box')
 
         Entity(
+            name='front_wall_x55',
             model='cube',
             position=(-55, 5, 75),
             scale=(1, 10, 50),
@@ -104,6 +109,7 @@ class LevelManager:
         )
 
         Entity(
+            name='front_wall_x45',
             model='cube',
             position=(-45, 5, 85),
             scale=(1, 10, 50),
@@ -182,11 +188,32 @@ class LevelManager:
 
     def _exit_gate(self):
         self.exit_gate = Entity(
+            name='exit_gate_trigger_panel',
             model='cube',
-            position=(-24.5, 2.6, 55),
-            scale=(0.1, 4.2, 7.5),
-            color=color.rgba(40, 220, 170, 70),
+            position=(-24.5, 2.7, 55),
+            scale=(0.12, 4.4, 8.0),
+            visible=False,
             collider='box',
+        )
+
+        self.gate_portal_front = Entity(
+            name='gate_portal_front',
+            model='quad',
+            texture='assets/portal.png',
+            position=(-24.25, 3.05, 55),
+            rotation_y=90,
+            scale=(5.8, 5.8),
+            color=color.white,
+        )
+
+        self.gate_portal_back = Entity(
+            name='gate_portal_back',
+            model='quad',
+            texture='assets/portal.png',
+            position=(-24.75, 3.05, 55),
+            rotation_y=-90,
+            scale=(5.8, 5.8),
+            color=color.white,
         )
 
     def apply_anomaly(self, anomaly_type):
@@ -199,7 +226,8 @@ class LevelManager:
             self.ceiling_sign.texture = 'assets/exit_0_wall.jpg'
 
         elif anomaly_type == 'gate_red':
-            self.exit_gate.color = color.rgba(220, 40, 40, 90)
+            self.gate_portal_front.color = color.rgb(255, 80, 80)
+            self.gate_portal_back.color = color.rgb(255, 80, 80)
 
         elif anomaly_type == 'wall_dark':
             self.left_wall.color = color.rgb(150, 150, 150)
@@ -209,7 +237,8 @@ class LevelManager:
         self.ceiling_sign.texture = 'assets/exit_8_ceiling.jpg'
         self.ceiling_sign.color = color.white
 
-        self.exit_gate.color = color.rgba(40, 220, 170, 70)
+        self.gate_portal_front.color = color.white
+        self.gate_portal_back.color = color.white
 
         self.left_wall.color = color.white
         self.right_wall.color = color.white
