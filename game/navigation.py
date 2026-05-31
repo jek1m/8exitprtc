@@ -29,6 +29,9 @@ class CorridorNavigation:
         start_point, start_segment = self._nearest_point_on_path(start_position)
         target_point, target_segment = self._nearest_point_on_path(target_position)
 
+        if start_segment == target_segment:
+            return [start_position, target_position]
+
         start_key = ('start', start_point)
         target_key = ('target', target_point)
 
@@ -39,12 +42,12 @@ class CorridorNavigation:
         self._connect_dynamic_point(graph, start_key, start_point, start_segment)
         self._connect_dynamic_point(graph, target_key, target_point, target_segment)
 
-        if start_segment == target_segment:
-            distance = flat_distance(start_point, target_point)
-            graph[start_key].append((target_key, distance))
-            graph[target_key].append((start_key, distance))
+        path = self._shortest_path(graph, start_key, target_key)
 
-        return self._shortest_path(graph, start_key, target_key)
+        if path and flat_distance(path[-1], target_position) > 0.05:
+            path.append(target_position)
+
+        return path
 
     def clamp_to_path(self, position, radius):
         nearest_point, _ = self._nearest_point_on_path(position)
