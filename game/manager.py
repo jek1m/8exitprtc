@@ -104,7 +104,7 @@ class GameManager:
 
         self.objective_text = Text(
             parent=camera.ui,
-            text='목표: 초록색 출구로 이동',
+            text='목표: 출구로 이동',
             position=(-0.12, 0.445),
             z=-0.2,
             scale=0.95,
