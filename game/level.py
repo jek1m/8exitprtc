@@ -16,6 +16,7 @@ class LevelManager:
         self.exit_gate = None
         self.gate_portal_front = None
         self.gate_portal_back = None
+        self.poster = None
 
         self.build_level()
 
@@ -25,6 +26,7 @@ class LevelManager:
         self._back_corridor()
         self._signs()
         self._exit_gate()
+        self._poster()
 
     def _main_corridor(self):
         Entity(
@@ -204,6 +206,42 @@ class LevelManager:
             rotation_y=90,
             scale=(5.8, 5.8),
             color=color.white,
+            double_sided=True,
+        )
+
+        self.gate_portal_back = Entity(
+            name='gate_portal_back',
+            model='quad',
+            texture='assets/portal.png',
+            position=(-24.75, 3.05, 55),
+            rotation_y=-90,
+            scale=(5.8, 5.8),
+            color=color.white,
+            double_sided=True,
+        )
+
+
+    def _poster(self):
+        self.poster = Entity(
+            name='poster',
+            model='quad',
+            texture='assets/poster.png',
+            position=(-4.48, 4.2, -10),
+            rotation_y=90,
+            scale=(3.0, 2.2),
+            texture_scale=(-1, 1),   # 좌우 반전 보정
+            color=color.white,
+            double_sided=True,
+        )
+
+        self.gate_portal_front = Entity(
+            name='gate_portal_front',
+            model='quad',
+            texture='assets/portal.png',
+            position=(-24.25, 3.05, 55),
+            rotation_y=90,
+            scale=(5.8, 5.8),
+            color=color.white,
         )
 
         self.gate_portal_back = Entity(
@@ -221,7 +259,6 @@ class LevelManager:
 
         if anomaly_type is None:
             return
-
         if anomaly_type == 'sign_wrong':
             self.ceiling_sign.texture = 'assets/exit_0_wall.jpg'
 
@@ -233,6 +270,9 @@ class LevelManager:
             self.left_wall.color = color.rgb(150, 150, 150)
             self.right_wall.color = color.rgb(150, 150, 150)
 
+        elif anomaly_type == 'poster_changed':
+            self.poster.texture = 'assets/poster2.png'
+
     def reset_anomaly(self):
         self.ceiling_sign.texture = 'assets/exit_8_ceiling.jpg'
         self.ceiling_sign.color = color.white
@@ -243,6 +283,8 @@ class LevelManager:
         self.left_wall.color = color.white
         self.right_wall.color = color.white
 
+        self.poster.texture = 'assets/poster.png'
+
     def get_anomaly_hint(self, anomaly_type):
         if anomaly_type == 'sign_wrong':
             return '힌트: 출구 표지판의 숫자를 확인하세요.'
@@ -250,6 +292,8 @@ class LevelManager:
             return '힌트: 출구문의 색깔을 확인하세요.'
         if anomaly_type == 'wall_dark':
             return '힌트: 양쪽 벽의 밝기를 확인하세요.'
+        if anomaly_type == 'poster_changed':
+            return '힌트: 벽에 붙은 포스터를 확인하세요.'
 
         return '힌트: 이번 층은 특별한 이상현상이 없을 수 있습니다.'
 

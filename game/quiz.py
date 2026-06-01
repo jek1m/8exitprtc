@@ -117,9 +117,9 @@ class QuizZone:
     def _make_question(self):
         # 이상현상이 있는 층이면 무조건 이상현상 관련 문제만 출제
         if self.game.current_anomaly is not None:
-            return self._make_anomaly_related_question()
+            return self._make_anomaly_question('anomaly_yes_no')
 
-        # 이상현상이 없는 정상 층이면 파이썬 상식 문제 또는 일반 문제 출제
+        # 이상현상이 없는 정상 층이면 일반 문제 또는 파이썬 상식 문제 출제
         question_types = ['math', 'python_basic', 'anomaly_yes_no']
         question_type = random.choice(question_types)
 
