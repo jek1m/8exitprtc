@@ -108,24 +108,33 @@ class QuizZone:
         elif self.question_type == 'anomaly_yes_no':
             self.hint_text = self.game.level.get_anomaly_hint(self.game.current_anomaly)
 
-        elif self.question_type == 'sign_number':
-            self.hint_text = '힌트: 천장에 있는 노란 출구 표지판을 확인하세요.'
+        elif self.question_type == 'python_basic':
+            self.hint_text = '힌트: 파이썬의 기본 문법을 떠올려보세요.'
 
         self._render()
         return True
 
     def _make_question(self):
-        # gate_color 제거함
-        question_types = ['math', 'anomaly_yes_no', 'sign_number']
+        # 이상현상이 있는 층이면 무조건 이상현상 관련 문제만 출제
+        if self.game.current_anomaly is not None:
+            return self._make_anomaly_related_question()
+
+        # 이상현상이 없는 정상 층이면 파이썬 상식 문제 또는 일반 문제 출제
+        question_types = ['math', 'python_basic', 'anomaly_yes_no']
         question_type = random.choice(question_types)
 
         if question_type == 'math':
             return self._make_math_question(question_type)
 
-        if question_type == 'anomaly_yes_no':
-            return self._make_anomaly_question(question_type)
+        if question_type == 'python_basic':
+            return self._make_python_basic_question(question_type)
 
-        return self._make_sign_question(question_type)
+        return self._make_anomaly_question(question_type)
+
+    def _make_anomaly_related_question(self):
+        # 이상현상이 있는 층에서는 파이썬 문제 금지
+        # 오직 이상현상 확인 문제만 출제
+        return self._make_anomaly_question('anomaly_yes_no')
 
     def _make_math_question(self, question_type):
         floor = self.game.floor
@@ -157,11 +166,55 @@ class QuizZone:
 
         return question, choices, correct_index, question_type
 
-    def _make_sign_question(self, question_type):
-        question = '천장 출구 표지판의 숫자는 무엇입니까?'
+    def _make_python_basic_question(self, question_type):
+        quiz_list = [
+            {
+                'question': '파이썬에서 출력할 때 사용하는 함수는?',
+                'choices': ['print()', 'input()', 'random()'],
+                'answer': 'print()',
+            },
+            {
+                'question': '파이썬에서 값을 입력받을 때 사용하는 함수는?',
+                'choices': ['input()', 'print()', 'len()'],
+                'answer': 'input()',
+            },
+            {
+                'question': '파이썬에서 문자열을 나타낼 때 사용하는 기호는?',
+                'choices': ['따옴표', '대괄호', '중괄호'],
+                'answer': '따옴표',
+            },
+            {
+                'question': '파이썬에서 리스트를 만들 때 사용하는 기호는?',
+                'choices': ['[]', '{}', '()'],
+                'answer': '[]',
+            },
+            {
+                'question': '파이썬에서 조건문을 만들 때 사용하는 키워드는?',
+                'choices': ['if', 'for', 'def'],
+                'answer': 'if',
+            },
+            {
+                'question': '파이썬에서 반복문을 만들 때 사용할 수 있는 키워드는?',
+                'choices': ['for', 'print', 'int'],
+                'answer': 'for',
+            },
+            {
+                'question': '파이썬에서 함수를 만들 때 사용하는 키워드는?',
+                'choices': ['def', 'if', 'list'],
+                'answer': 'def',
+            },
+            {
+                'question': '파이썬에서 주석을 작성할 때 사용하는 기호는?',
+                'choices': ['#', '@', '&'],
+                'answer': '#',
+            },
+        ]
 
-        answer = 0 if self.game.current_anomaly == 'sign_wrong' else 8
-        choices = [8, 0, 9]
+        selected_quiz = random.choice(quiz_list)
+
+        question = selected_quiz['question']
+        choices = selected_quiz['choices'][:]
+        answer = selected_quiz['answer']
 
         random.shuffle(choices)
         correct_index = choices.index(answer)
