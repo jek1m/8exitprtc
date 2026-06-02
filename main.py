@@ -1,4 +1,4 @@
-import builtins
+﻿import builtins
 from pathlib import Path
 
 from panda3d.core import AntialiasAttrib, loadPrcFileData
