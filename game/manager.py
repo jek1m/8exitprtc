@@ -22,6 +22,8 @@ class GameManager:
         self.total_play_time = 0
 
         self.current_anomaly = None
+        self.remaining_anomalies = []
+        self.anomaly_deck = []
 
         self.wrong_count = 0
         self.caught_count = 0
@@ -31,7 +33,7 @@ class GameManager:
         self.event_logs = []
 
         self.level = LevelManager()
-
+        self.reset_anomaly_pool()
         self.player = FirstPersonController()
         self.player.cursor.visible = False
         self.player.gravity = 0.5
@@ -233,7 +235,12 @@ class GameManager:
         self.practice_mode = False
         self.floor_timer = max(MIN_FLOOR_TIME, BASE_FLOOR_TIME - (self.floor - 1) * 2)
 
-        self.current_anomaly = random.choice(ANOMALY_TYPES)
+        # 아직 안 나온 기믹이 남아 있고, 50% 확률로 이상현상 발생
+        if self.remaining_anomalies and random.random() < 0.5:
+            self.current_anomaly = self.remaining_anomalies.pop()
+        else:
+            self.current_anomaly = None
+
         self.level.apply_anomaly(self.current_anomaly)
 
         self.chaser.entity.enabled = True
@@ -399,6 +406,8 @@ class GameManager:
         self.timeout_count = 0
         self.hint_count = 0
         self.event_logs = []
+
+        self.reset_anomaly_pool()
 
         self.clear_panel.enabled = False
         self.clear_title.enabled = False
@@ -588,3 +597,26 @@ class GameManager:
             f'[ R ] 다시 시작\n'
             f'[ ESC ] 종료'
         )
+    
+    def make_anomaly_deck(self):
+        self.anomaly_deck = [
+            None,
+            None,
+            None,
+            None,
+            'sign_wrong',
+            'gate_red',
+            'wall_dark',
+            'poster_changed',
+        ]
+
+        random.shuffle(self.anomaly_deck)
+
+    def reset_anomaly_pool(self):
+        self.remaining_anomalies = [
+            'sign_wrong',
+            'gate_red',
+            'wall_dark',
+            'poster_changed',
+        ]
+        random.shuffle(self.remaining_anomalies)
