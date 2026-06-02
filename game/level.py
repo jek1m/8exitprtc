@@ -262,10 +262,6 @@ class LevelManager:
         if anomaly_type == 'sign_wrong':
             self.ceiling_sign.texture = 'assets/exit_0_wall.jpg'
 
-        elif anomaly_type == 'gate_red':
-            self.gate_portal_front.color = color.rgb(255, 80, 80)
-            self.gate_portal_back.color = color.rgb(255, 80, 80)
-
         elif anomaly_type == 'wall_dark':
             self.left_wall.color = color.rgb(150, 150, 150)
             self.right_wall.color = color.rgb(150, 150, 150)
@@ -288,8 +284,6 @@ class LevelManager:
     def get_anomaly_hint(self, anomaly_type):
         if anomaly_type == 'sign_wrong':
             return '힌트: 출구 표지판의 숫자를 확인하세요.'
-        if anomaly_type == 'gate_red':
-            return '힌트: 출구문의 색깔을 확인하세요.'
         if anomaly_type == 'wall_dark':
             return '힌트: 양쪽 벽의 밝기를 확인하세요.'
         if anomaly_type == 'poster_changed':
